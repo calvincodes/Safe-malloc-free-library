@@ -2,6 +2,7 @@
 // Created by Anshu on 12/1/18.
 //
 
+
 #ifndef MALLOC_LIBRARY_TREENODE_H
 #define MALLOC_LIBRARY_TREENODE_H
 
@@ -13,19 +14,18 @@ typedef struct TreeNode
     struct TreeNode *left;
     struct TreeNode *right;
     int height;
-    int length;
+    size_t length;
 } TreeNode;
 
-int max(int a, int b);
+//
 
-int height(TreeNode *node);
 
-TreeNode* newNode(void* address, int size);
+TreeNode* newNode(void* address, size_t size);
 
-TreeNode* insert(TreeNode* node, void* address, int length);
+TreeNode* insert(void* address, size_t length);
 
-TreeNode* deleteNode(TreeNode* root, void* address);
+void delete(void* address);
 
 void preOrder(TreeNode *root);
 
-TreeNode* search(TreeNode* root, void* address);
+//TreeNode* search(TreeNode* root, void* address);

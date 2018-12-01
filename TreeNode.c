@@ -5,6 +5,8 @@
 #include<stdlib.h>
 #include "TreeNode.h"
 
+TreeNode *root = NULL;
+
 int height(TreeNode *node)
 {
     if (node == NULL)
@@ -20,11 +22,11 @@ int max(int a, int b) {
 
 /* Helper function that allocates a new node with the given address and
     NULL left and right pointers. */
-TreeNode* newNode(void* address, int length) {
+TreeNode* newNode(void* address, size_t length) {
     TreeNode* node = (TreeNode*)
             malloc(sizeof(TreeNode));
     node->address   = address;
-    node->length      = length;
+    node->length    = length;
     node->left      = NULL;
     node->right     = NULL;
     node->height    = 1;  // new node is initially added at leaf
@@ -76,16 +78,17 @@ int getBalance(TreeNode*N)
 
 // Recursive function to insert a address in the subtree rooted
 // with node and returns the new root of the subtree.
-TreeNode* insert(TreeNode* node, void* address, int length)
+
+TreeNode* insertNode(TreeNode* node, void* address, size_t length)
 {
     /* 1.  Perform the normal BST insertion */
     if (node == NULL)
         return(newNode(address, length));
 
     if (address < node->address)
-        node->left  = insert(node->left, address, length);
+        node->left  = insertNode(node->left, address, length);
     else if (address > node->address)
-        node->right = insert(node->right, address, length);
+        node->right = insertNode(node->right, address, length);
     else // Equal address are not allowed in BST
         return node;
 
@@ -127,6 +130,15 @@ TreeNode* insert(TreeNode* node, void* address, int length)
     return node;
 }
 
+TreeNode* insert(void* address, size_t length){
+    if(root == NULL){
+        root = insertNode(root, address, length);
+    } else {
+        insertNode(root, address, length);
+    }
+    return root;
+}
+
 TreeNode * minValueNode(TreeNode* node)
 {
     TreeNode* current = node;
@@ -142,6 +154,7 @@ TreeNode * minValueNode(TreeNode* node)
 // Recursive function to delete a node with given key
 // from subtree with given root. It returns root of
 // the modified subtree.
+
 TreeNode* deleteNode(TreeNode* root, void* address)
 {
     // STEP 1: PERFORM STANDARD BST DELETE
@@ -151,6 +164,10 @@ TreeNode* deleteNode(TreeNode* root, void* address)
 
     // If the key to be deleted is smaller than the
     // root's key, then it lies in left subtree
+    if(root->address < address && root->address + root->length > address){
+        fprintf(stderr, "\nError : Not the first byte of the address\n");
+        exit(-1);
+    }
     if ( address < root->address )
         root->left = deleteNode(root->left, address);
 
@@ -233,18 +250,62 @@ TreeNode* deleteNode(TreeNode* root, void* address)
     return root;
 }
 
-TreeNode* search(TreeNode* root, void* address){
+TreeNode* isValidNode(TreeNode* root, void* address){
     if(root == NULL){
         return NULL;
     }
     if(root->address == address){
         return root;
-    } else if(root->address > address){
-        return search(root->left, address);
-    } else{
-        return search(root->right, address);
     }
+    else if(root->address < address && root->address + root->length > address){
+        fprintf(stderr, "\nError : Not the first byte of the address\n");
+        exit(-1);
+    } else if(root->address == address){
+
+    } else if(root->address > address){
+        return isValidNode(root->left, address);
+    } else{
+        return isValidNode(root->right, address);
+    }
+
 }
+
+void delete(void* address){
+    TreeNode *node = isValidNode(root, address);
+    if(node == NULL){
+        fprintf(stderr, "\nError : Requested memory is already freed up or not available\n");
+        exit(-1);
+    }
+    root = deleteNode(root, address);
+    return;
+}
+
+
+//TreeNode* search(TreeNode* root, void* address){
+//    if(root == NULL){
+//        return NULL;
+//    }
+//    if(root->address == address){
+//        return root;
+//    } else if(root->address > address){
+//        return search(root->left, address);
+//    } else{
+//        return search(root->right, address);
+//    }
+//}
+//
+//TreeNode* isValidAddressToBeInserted(TreeNode* root, void* address, size_t size){
+//    if(root == NULL){
+//        return NULL;
+//    }
+//    if(root->address == address){
+//        return root;
+//    } else if(root->address > address){
+//        return isValidAddressToBeInserted(root->left, address);
+//    } else{
+//        return isValidAddressToBeInserted(root->right, address);
+//    }
+//}
 
 void preOrder(TreeNode *root)
 {
