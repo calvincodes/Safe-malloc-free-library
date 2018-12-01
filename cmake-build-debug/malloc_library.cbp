@@ -82,6 +82,12 @@
 				</MakeCommands>
 			</Target>
 		</Build>
+		<Unit filename="/Users/anshu/Project/malloc-library/TreeNode.c">
+			<Option target="malloc_library"/>
+		</Unit>
+		<Unit filename="/Users/anshu/Project/malloc-library/TreeNode.h">
+			<Option target="malloc_library"/>
+		</Unit>
 		<Unit filename="/Users/anshu/Project/malloc-library/main.c">
 			<Option target="malloc_library"/>
 		</Unit>

@@ -123,6 +123,33 @@ malloc_library/fast:
 	$(MAKE) -f CMakeFiles/malloc_library.dir/build.make CMakeFiles/malloc_library.dir/build
 .PHONY : malloc_library/fast
 
+TreeNode.o: TreeNode.c.o
+
+.PHONY : TreeNode.o
+
+# target to build an object file
+TreeNode.c.o:
+	$(MAKE) -f CMakeFiles/malloc_library.dir/build.make CMakeFiles/malloc_library.dir/TreeNode.c.o
+.PHONY : TreeNode.c.o
+
+TreeNode.i: TreeNode.c.i
+
+.PHONY : TreeNode.i
+
+# target to preprocess a source file
+TreeNode.c.i:
+	$(MAKE) -f CMakeFiles/malloc_library.dir/build.make CMakeFiles/malloc_library.dir/TreeNode.c.i
+.PHONY : TreeNode.c.i
+
+TreeNode.s: TreeNode.c.s
+
+.PHONY : TreeNode.s
+
+# target to generate assembly for a file
+TreeNode.c.s:
+	$(MAKE) -f CMakeFiles/malloc_library.dir/build.make CMakeFiles/malloc_library.dir/TreeNode.c.s
+.PHONY : TreeNode.c.s
+
 main.o: main.c.o
 
 .PHONY : main.o
@@ -159,6 +186,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... malloc_library"
+	@echo "... TreeNode.o"
+	@echo "... TreeNode.i"
+	@echo "... TreeNode.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

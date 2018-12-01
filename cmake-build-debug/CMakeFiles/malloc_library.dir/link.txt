@@ -1,1 +1,1 @@
-/Library/Developer/CommandLineTools/usr/bin/cc -g -Wl,-search_paths_first -Wl,-headerpad_max_install_names  CMakeFiles/malloc_library.dir/main.c.o  -o malloc_library 
+/Library/Developer/CommandLineTools/usr/bin/cc -g -Wl,-search_paths_first -Wl,-headerpad_max_install_names  CMakeFiles/malloc_library.dir/main.c.o CMakeFiles/malloc_library.dir/TreeNode.c.o  -o malloc_library 
