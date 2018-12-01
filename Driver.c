@@ -17,7 +17,7 @@ void *malloc537(size_t size){
 }
 void free537(void *ptr){
     if(ptr == NULL){
-        fprintf(stderr, "Error : Requested pointer is NULL");
+        fprintf(stderr, "Error : Given pointer is NULL");
         exit(-1);
     }
     delete(ptr);
@@ -37,6 +37,10 @@ void *realloc537(void *ptr, size_t size){
     }
 }
 void memcheck537(void *ptr, size_t size){
-
+    if(ptr == NULL){
+        fprintf(stderr, "Error : Requested pointer is NULL");
+        exit(-1);
+    }
+    validateTreeNode(ptr, size);
 }
 

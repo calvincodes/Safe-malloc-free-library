@@ -28,4 +28,4 @@ void delete(void* address);
 
 void preOrder(TreeNode *root);
 
-//TreeNode* search(TreeNode* root, void* address);
+void validateTreeNode(void *address, size_t size);
