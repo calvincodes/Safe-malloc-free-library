@@ -311,7 +311,7 @@ void preOrder(TreeNode *root)
 {
     if(root != NULL)
     {
-        printf("%ld ", (intptr_t)root->address);
+        printf("%ld ", (__intptr_t)root->address);
         preOrder(root->left);
         preOrder(root->right);
     }
