@@ -3,18 +3,18 @@ WARNING_FLAGS = -Wall -Wextra -g -O0
 SCAN_BUILD_DIR = scan-build-out
 EXE=output
 
-all: main.o Driver.o TreeNode.o
-	$(CC) -o $(EXE) main.o Driver.o TreeNode.o
+all: main.o 537malloc.o TreeNode.o
+	$(CC) -o $(EXE) main.o 537malloc.o TreeNode.o
 
 # main.c is your testcase file name
-main.o: main.c
-	$(CC) -Wall -Wextra -c main.c
+main.o: advanced_testcase1.c
+	$(CC) -Wall -Wextra -o main.o -c advanced_testcase1.c
 
 # Include all your .o files in the below rule
-obj: Driver.o TreeNode.o
+obj: 537malloc.o TreeNode.o
 
-Driver.o: Driver.c Driver.h
-	$(CC) $(WARNING_FLAGS) -c Driver.c
+537malloc.o: 537malloc.c 537malloc.h
+	$(CC) $(WARNING_FLAGS) -c 537malloc.c
 
 TreeNode.o: TreeNode.c TreeNode.h
 	$(CC) $(WARNING_FLAGS) -c TreeNode.c

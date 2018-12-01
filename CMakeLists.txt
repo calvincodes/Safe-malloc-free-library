@@ -3,4 +3,4 @@ project(malloc_library)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(malloc_library main.c TreeNode.c TreeNode.h Driver.c Driver.h)
+add_executable(malloc_library main.c TreeNode.c TreeNode.h 537malloc.c 537malloc.h)
