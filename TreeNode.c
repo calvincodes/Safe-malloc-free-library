@@ -260,14 +260,39 @@ TreeNode* isValidNode(TreeNode* root, void* address){
     else if(root->address < address && root->address + root->length > address){
         fprintf(stderr, "\nError : Not the first byte of the address\n");
         exit(-1);
-    } else if(root->address == address){
-
     } else if(root->address > address){
         return isValidNode(root->left, address);
     } else{
         return isValidNode(root->right, address);
     }
 
+}
+
+TreeNode* isValidTreeNode(TreeNode* root, void* address, size_t size){
+    if(root == NULL){
+        return NULL;
+    }
+    if(root->address <= address && root->address + root->length >= address + size){
+        return root;
+    }
+    else if (root->address <= address &&  root->address + root->length >= address && root->address + root->length < address + size){
+        fprintf(stderr, "\nError : Address is valid but size is overflowing allocated range\n");
+        exit(-1);
+    }
+    else if(root->address > address){
+        return isValidNode(root->left, address);
+    } else{
+        return isValidNode(root->right, address);
+    }
+
+}
+
+void validateTreeNode(void *address, size_t size){
+    TreeNode *node = isValidTreeNode(root, address, size);
+    if(node == NULL){
+        fprintf(stderr, "\nError : Invalid memory access. Either memory already freed up or not allocated yet\n");
+        exit(-1);
+    }
 }
 
 void delete(void* address){

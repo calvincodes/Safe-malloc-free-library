@@ -10,11 +10,13 @@ int main(){
 
     int *ptr = (int*)malloc537(10 * sizeof(int));
     int *ptr2 = (int*)malloc537(10 * sizeof(int));
-    free537(ptr);
-    free537(ptr2);
-
-    int *ptr1 = (int*)malloc537(10 * sizeof(int));
-    free537(ptr1);
+//    free537(ptr);
+    memcheck537(ptr+6, 10 * sizeof(int));
+//    free537(ptr);
+//    free537(ptr2);
+//
+//    int *ptr1 = (int*)malloc537(10 * sizeof(int));
+//    free537(ptr1);
 
 //    printf("%p\n", ptr);
 //    TreeNode *root = NULL;
