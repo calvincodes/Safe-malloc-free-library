@@ -275,9 +275,9 @@ TreeNode* isValidTreeNode(TreeNode* root, void* address, size_t size){
         exit(-1);
     }
     else if(root->address > address){
-        return isValidNode(root->left, address);
+        return isValidTreeNode(root->left, address, size);
     } else{
-        return isValidNode(root->right, address);
+        return isValidTreeNode(root->right, address, size);
     }
 
 }
@@ -290,6 +290,16 @@ void validateTreeNode(void *address, size_t size){
     }
 }
 
+void disable(void* address){
+    TreeNode *node = isValidNode(root, address);
+    if(node == NULL){
+        fprintf(stderr, "\nError : Requested memory is already freed up or not available\n");
+        exit(-1);
+    }
+    root = deleteNode(root, address);
+    return;
+}
+
 void delete(void* address){
     TreeNode *node = isValidNode(root, address);
     if(node == NULL){
@@ -300,39 +310,11 @@ void delete(void* address){
     return;
 }
 
-
-//TreeNode* search(TreeNode* root, void* address){
-//    if(root == NULL){
-//        return NULL;
-//    }
-//    if(root->address == address){
-//        return root;
-//    } else if(root->address > address){
-//        return search(root->left, address);
-//    } else{
-//        return search(root->right, address);
-//    }
-//}
-//
-//TreeNode* isValidAddressToBeInserted(TreeNode* root, void* address, size_t size){
-//    if(root == NULL){
-//        return NULL;
-//    }
-//    if(root->address == address){
-//        return root;
-//    } else if(root->address > address){
-//        return isValidAddressToBeInserted(root->left, address);
-//    } else{
-//        return isValidAddressToBeInserted(root->right, address);
-//    }
-//}
-
 void preOrder(TreeNode *root)
 {
     if(root != NULL)
     {
-        printf("%ld ", (__intptr_t)root->address);
-//        printf("%ld ", (intptr_t)root->address);
+//        printf("%ld ", (__intptr_t)root->address);
         preOrder(root->left);
         preOrder(root->right);
     }
