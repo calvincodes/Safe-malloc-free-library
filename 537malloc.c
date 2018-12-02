@@ -16,6 +16,10 @@ void *malloc537(size_t size){
         exit(-1);
     }
     void* ptr = malloc(size);
+    if(ptr == NULL){
+        fprintf(stderr, "\nMalloc failed to allocate memory\n");
+        exit(-1);
+    }
     insert(ptr, size);
     return ptr;
 }
@@ -40,6 +44,10 @@ void *realloc537(void *ptr, size_t size){
     } else {
         delete(ptr);
         void *newPtr = realloc(ptr, size);
+        if(newPtr == NULL){
+            fprintf(stderr, "\nRemalloc failed to allocate memory\n");
+            exit(-1);
+        }
         insert(newPtr, size);
         return newPtr;
     }
