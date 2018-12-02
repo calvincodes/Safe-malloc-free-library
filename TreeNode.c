@@ -289,7 +289,11 @@ TreeNode* isValidTreeNode(TreeNode* root, void* address, size_t size){
 void validateTreeNode(void *address, size_t size){
     TreeNode *node = isValidTreeNode(root, address, size);
     if(node == NULL){
-        fprintf(stderr, "\nError : Invalid memory access. Either memory already freed up or not allocated yet %p\n", address);
+        fprintf(stderr, "\nError : Invalid memory access. Memory not allocated yet %p\n", address);
+        exit(-1);
+    }
+    if (!node->active) {
+        fprintf(stderr, "\ndouble free or corruption: %p\n", address);
         exit(-1);
     }
 }
@@ -297,7 +301,7 @@ void validateTreeNode(void *address, size_t size){
 void disable(void* address){
     TreeNode *node = isValidNode(root, address);
     if(node == NULL){
-        fprintf(stderr, "\nError: Requested memory is already freed up or not available %p\n", address);
+        fprintf(stderr, "\nError: Requested memory is not available %p\n", address);
         exit(-1);
     }
     if (!node->active) {
