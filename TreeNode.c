@@ -197,6 +197,7 @@ TreeNode* deleteNode(TreeNode* root, void* address)
 
             // Copy the inorder successor's data to this node
             root->address = temp->address;
+            root->length = temp->length;
 
             // Delete the inorder successor
             root->right = deleteNode(root->right, temp->address);
@@ -250,10 +251,9 @@ TreeNode* isValidNode(TreeNode* root, void* address){
         return root;
     }
     else if(root->address < address && (root->address + root->length) > address){
-//        printf("%ld ", (intptr_t)root->address);
-//        printf("%ld ", (intptr_t)(root->address + root->length));
-//        printf("%ld ", (intptr_t)address);
         fprintf(stderr, "\nError : Not the first byte of the address\n");
+//        fprintf(stderr,"Root address : %ld, Root size %ud, Address being freed up: %ld",
+                (intptr_t)root->address, root->length, (intptr_t)address);
         exit(-1);
     } else if(root->address > address){
         return isValidNode(root->left, address);
@@ -331,7 +331,7 @@ void preOrder(TreeNode *root)
 {
     if(root != NULL)
     {
-        printf("%ld ", (__intptr_t)root->address);
+//        printf("%ld ", (__intptr_t)root->address);
 //        printf("%ld ", (intptr_t)root->address);
         preOrder(root->left);
         preOrder(root->right);
