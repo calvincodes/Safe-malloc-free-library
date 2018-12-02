@@ -89,8 +89,12 @@ TreeNode* insertNode(TreeNode* node, void* address, size_t length)
         node->left  = insertNode(node->left, address, length);
     else if (address > node->address)
         node->right = insertNode(node->right, address, length);
-    else // Equal address are not allowed in BST
+    else {
+        // Equal address are not allowed in BST
+        node->active = true;
+        node->length = length;
         return node;
+    }
 
     /* 2. Update height of this ancestor node */
     node->height = 1 + max(height(node->left),
@@ -198,6 +202,7 @@ TreeNode* deleteNode(TreeNode* root, void* address)
             // Copy the inorder successor's data to this node
             root->address = temp->address;
             root->length = temp->length;
+            root->active = temp->active;
 
             // Delete the inorder successor
             root->right = deleteNode(root->right, temp->address);
@@ -296,7 +301,8 @@ void disable(void* address){
         fprintf(stderr, "\nError : Requested memory is already freed up or not available\n");
         exit(-1);
     }
-    root = deleteNode(root, address);
+    node->active = false;
+    node->length = 0;
     return;
 }
 

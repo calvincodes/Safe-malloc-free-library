@@ -20,7 +20,7 @@ void free537(void *ptr){
         fprintf(stderr, "\nError : Given pointer is NULL\n");
         exit(-1);
     }
-    delete(ptr);
+    disable(ptr);
     free(ptr);
 }
 void *realloc537(void *ptr, size_t size){
