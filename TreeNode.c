@@ -131,11 +131,7 @@ TreeNode* insertNode(TreeNode* node, void* address, size_t length)
 }
 
 TreeNode* insert(void* address, size_t length){
-    if(root == NULL){
-        root = insertNode(root, address, length);
-    } else {
-        insertNode(root, address, length);
-    }
+    root = insertNode(root, address, length);
     return root;
 }
 
@@ -164,10 +160,6 @@ TreeNode* deleteNode(TreeNode* root, void* address)
 
     // If the key to be deleted is smaller than the
     // root's key, then it lies in left subtree
-    if(root->address < address && root->address + root->length > address){
-        fprintf(stderr, "\nError : Not the first byte of the address\n");
-        exit(-1);
-    }
     if ( address < root->address )
         root->left = deleteNode(root->left, address);
 
@@ -257,7 +249,10 @@ TreeNode* isValidNode(TreeNode* root, void* address){
     if(root->address == address){
         return root;
     }
-    else if(root->address < address && root->address + root->length > address){
+    else if(root->address < address && (root->address + root->length) > address){
+//        printf("%ld ", (intptr_t)root->address);
+//        printf("%ld ", (intptr_t)(root->address + root->length));
+//        printf("%ld ", (intptr_t)address);
         fprintf(stderr, "\nError : Not the first byte of the address\n");
         exit(-1);
     } else if(root->address > address){
@@ -337,6 +332,7 @@ void preOrder(TreeNode *root)
     if(root != NULL)
     {
         printf("%ld ", (__intptr_t)root->address);
+//        printf("%ld ", (intptr_t)root->address);
         preOrder(root->left);
         preOrder(root->right);
     }

@@ -1,48 +1,73 @@
 #include <stdio.h>
+#include <time.h>
 #include <stdlib.h>
 #include "537malloc.h"
 
-int main(){
+#define LIMIT 100000
+#define SIZE_RANGE 10000
 
-    int *ptr = (int*)malloc537(10 * sizeof(int));
-    int *ptr2 = (int*)malloc537(10 * sizeof(int));
-//    free537(ptr);
-    memcheck537(ptr+6, 10 * sizeof(int));
-//    free537(ptr);
-//    free537(ptr2);
-//
-//    int *ptr1 = (int*)malloc537(10 * sizeof(int));
-//    free537(ptr1);
+int main() {
+    int i;
+    int mem_size[LIMIT];
+    int *addr[LIMIT] = {NULL};
 
-//    printf("%p\n", ptr);
-//    TreeNode *root = NULL;
-//    root = insert(root, ptr,1);
-//    root = insert(root, ptr+1,1);
-//    root = insert(root, ptr+2,1);
-//    root = insert(root, ptr+3,1);
-//    root = insert(root, ptr+4,1);
-//    root = insert(root, ptr+5,1);
-//    root = insert(root, ptr+6,1);
-//    root = insert(root, ptr+7,1);
-//    root = insert(root, ptr+8,1);
-//    preOrder(root);
-//    if(search(root, ptr+5)){
-//        printf("\nSearch is working fine");
-//    } else {
-//        printf("\nSearch is failing");
-//    }
-//    printf("\nAfter deleting %ld \n", (intptr_t)ptr);
-//    root = deleteNode(root, ptr);
-//    preOrder(root);
-//    printf("\nAfter deleting %ld \n", (intptr_t)ptr+4);
-//    root = deleteNode(root, ptr+4);
-//    preOrder(root);
-//    printf("\nAfter deleting %ld \n",(intptr_t)ptr+8);
-//    root = deleteNode(root, ptr+8);
-//    preOrder(root);
+    // Getting random sizes
+    srand(time(NULL));
+    for(i = 0; i < LIMIT; i++) {
+        mem_size[i] = rand() % SIZE_RANGE + 1;
+    }
+
+    clock_t startTimeAlloc = clock();
+    printf("Allocating randomly of random size\n");
+    // Allocating randomly
+    int count = 0, index;
+    while(count < LIMIT) {
+        index = rand() % LIMIT;
+        if(addr[index] == NULL) {
+            addr[index] = malloc537(mem_size[index]);
+            printf("Allocated %d size @ %p\n", mem_size[index], addr[index]);
+        }
+        count++;
+    }
+    // fill out the missing allocations
+    count = 0;
+    while(count < LIMIT) {
+        if(addr[count] == NULL) {
+            addr[count] = malloc537(mem_size[count]);
+            printf("Allocated %d size @ %p\n", mem_size[count], addr[count]);
+        }
+        count++;
+    }
+    clock_t endTimeAlloc = clock();
+
+    printf("Freeing randomly from the allocated addresses\n");
+    clock_t startTimeFree = clock();
+    // free randomly
+    count = 0;
+    index = 0;
+    while(count < LIMIT) {
+        index = rand() % LIMIT;
+        if(addr[index] != NULL) {
+            printf("Free memory @ %p\n", addr[index]);
+            free537(addr[index]);
+            addr[index] = NULL;
+        }
+        count++;
+    }
+    // free the rest
+    count = 0;
+    while(count < LIMIT) {
+        if(addr[count] != NULL) {
+            printf("Free memory @ %p\n", addr[count]);
+            free537(addr[count]);
+            addr[index] = NULL;
+        }
+        count++;
+    }
+    clock_t endTimeFree = clock();
+
+    printf("If this prints, you get points!\n");
+    printf("Alloc Time Taken : %f secs\n", ((double)endTimeAlloc - startTimeAlloc) / CLOCKS_PER_SEC);
+    printf("Free Time Taken : %f secs\n", ((double)endTimeFree - startTimeFree) / CLOCKS_PER_SEC);
     return 0;
-
 }
-
-
-

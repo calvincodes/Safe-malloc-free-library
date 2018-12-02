@@ -7,8 +7,8 @@ all: main.o 537malloc.o TreeNode.o
 	$(CC) -o $(EXE) main.o 537malloc.o TreeNode.o
 
 # main.c is your testcase file name
-main.o: advanced_testcase1.c
-	$(CC) -Wall -Wextra -o main.o -c advanced_testcase1.c
+main.o: advanced_testcase2.c
+	$(CC) -Wall -Wextra -o main.o -c advanced_testcase2.c
 
 # Include all your .o files in the below rule
 obj: 537malloc.o TreeNode.o
