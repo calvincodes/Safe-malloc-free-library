@@ -1,29 +1,49 @@
 # README #
 
-This README would normally document whatever steps are necessary to get your application up and running.
+# A Safe malloc/free library
+## Authors
 
-### What is this repository for? ###
+* **Arpit Jain**
+* **Anshu Verma**
 
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
 
-### How do I get set up? ###
+A build tool to read, validate and execute make files.
+Uses fork and execvp for creation of new processes and command execution.
 
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
+## Task List
 
-### Contribution guidelines ###
+This project is divided in the following major modules.
 
-* Writing tests
-* Code review
-* Other guidelines
+* **malloc537**:
+    * Reads the command line arguments if passed and parses them.
+    * Reads the make file and parses to create a graph structure for all the targets which are to be executed.
 
-### Who do I talk to? ###
+* **free537**:
+    * Traverses through the graph (assuming no cycles) in PostOrder manner.
+    * Checks if a target requires rebuilt as per the modification time of all its dependencies.
+    * Executes all the commands associated with a target if target building is required.
 
-* Repo owner or admin
-* Other community or team contact
+* **memcheck537**:
+    * Traverses through the graph (assuming no cycles) in PostOrder manner.
+    * Checks if a target requires rebuilt as per the modification time of all its dependencies.
+    * Executes all the commands associated with a target if target building is required.
+
+* **Files**:
+    * TreeNode.c:
+        * It defines all the target node in the makeFile. All the dependencies and command associates are part of this structure.
+        * It also provides following functionality.
+        * This also lets you create all the connections among graph Node.
+        * It also has cycle detection method
+
+    * linkedList:
+        * It defines the list of dependencies associated with TargetNode.
+        * All the commands node are also modeled as linkedList
+
+    * struct_input:
+        * This input structure stores the input commands like target or makefile provided in the command line.
+
+* **Utils**:
+    * Constants used across the program.
+    * Validator used across the program.
+
+* **driver.c** is the driver module for the entire project.

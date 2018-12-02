@@ -131,11 +131,7 @@ TreeNode* insertNode(TreeNode* node, void* address, size_t length)
 }
 
 TreeNode* insert(void* address, size_t length){
-    if(root == NULL){
-        root = insertNode(root, address, length);
-    } else {
-        insertNode(root, address, length);
-    }
+    root = insertNode(root, address, length);
     return root;
 }
 

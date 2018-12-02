@@ -10,8 +10,11 @@ int main(){
 
     int *ptr = (int*)malloc537(10 * sizeof(int));
     int *ptr2 = (int*)malloc537(10 * sizeof(int));
+    int *ptr3 = (int*)malloc537(10 * sizeof(int));
+    int *ptr4 = (int*)malloc537(10 * sizeof(int));
 //    free537(ptr);
-    memcheck537(ptr+6, 10 * sizeof(int));
+    memcheck537(ptr+6, 1 * sizeof(int));
+    memcheck537(ptr2+6, 3 * sizeof(int));
 //    free537(ptr);
 //    free537(ptr2);
 //
