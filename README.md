@@ -31,3 +31,6 @@ This project is divided in the following major modules.
    * This function checks to see the address range specified by address ptr and length size are fully within a range allocated by malloc537() and memory not yet freed by free537()*
    * When an error is detected, then print out a detailed and informative error message and exit the program (with a -1 status)*
 
+#### References
+https://www.geeksforgeeks.org/avl-tree-set-1-insertion/
+https://www.geeksforgeeks.org/avl-tree-set-2-deletion/
