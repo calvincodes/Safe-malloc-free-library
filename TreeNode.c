@@ -30,6 +30,7 @@ TreeNode* newNode(void* address, size_t length) {
     node->left      = NULL;
     node->right     = NULL;
     node->height    = 1;  // new node is initially added at leaf
+    node->active    = true;
     return(node);
 }
 
@@ -256,9 +257,7 @@ TreeNode* isValidNode(TreeNode* root, void* address){
         return root;
     }
     else if(root->address < address && (root->address + root->length) > address){
-        fprintf(stderr, "\nError : Not the first byte of the address\n");
-//        fprintf(stderr,"Root address : %ld, Root size %ud, Address being freed up: %ld",
-                (intptr_t)root->address, root->length, (intptr_t)address);
+        fprintf(stderr, "\nError: Not the first byte of the address %p\n", address);
         exit(-1);
     } else if(root->address > address){
         return isValidNode(root->left, address);
@@ -290,7 +289,7 @@ TreeNode* isValidTreeNode(TreeNode* root, void* address, size_t size){
 void validateTreeNode(void *address, size_t size){
     TreeNode *node = isValidTreeNode(root, address, size);
     if(node == NULL){
-        fprintf(stderr, "\nError : Invalid memory access. Either memory already freed up or not allocated yet\n");
+        fprintf(stderr, "\nError : Invalid memory access. Either memory already freed up or not allocated yet %p\n", address);
         exit(-1);
     }
 }
@@ -298,7 +297,11 @@ void validateTreeNode(void *address, size_t size){
 void disable(void* address){
     TreeNode *node = isValidNode(root, address);
     if(node == NULL){
-        fprintf(stderr, "\nError : Requested memory is already freed up or not available\n");
+        fprintf(stderr, "\nError: Requested memory is already freed up or not available %p\n", address);
+        exit(-1);
+    }
+    if (!node->active) {
+        fprintf(stderr, "\ndouble free or corruption: %p\n", address);
         exit(-1);
     }
     node->active = false;
@@ -309,7 +312,7 @@ void disable(void* address){
 void delete(void* address){
     TreeNode *node = isValidNode(root, address);
     if(node == NULL){
-        fprintf(stderr, "\nError : Requested memory is already freed up or not available\n");
+        fprintf(stderr, "\nError: Requested memory is already freed up or not available %p\n", address);
         exit(-1);
     }
     root = deleteNode(root, address);
