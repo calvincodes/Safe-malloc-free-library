@@ -30,6 +30,7 @@ TreeNode* newNode(void* address, size_t length) {
     node->left      = NULL;
     node->right     = NULL;
     node->height    = 1;  // new node is initially added at leaf
+    node->active    = true;
     return(node);
 }
 
@@ -89,8 +90,12 @@ TreeNode* insertNode(TreeNode* node, void* address, size_t length)
         node->left  = insertNode(node->left, address, length);
     else if (address > node->address)
         node->right = insertNode(node->right, address, length);
-    else // Equal address are not allowed in BST
+    else {
+        // Equal address are not allowed in BST
+        node->active = true;
+        node->length = length;
         return node;
+    }
 
     /* 2. Update height of this ancestor node */
     node->height = 1 + max(height(node->left),
@@ -198,6 +203,7 @@ TreeNode* deleteNode(TreeNode* root, void* address)
             // Copy the inorder successor's data to this node
             root->address = temp->address;
             root->length = temp->length;
+            root->active = temp->active;
 
             // Delete the inorder successor
             root->right = deleteNode(root->right, temp->address);
@@ -251,9 +257,7 @@ TreeNode* isValidNode(TreeNode* root, void* address){
         return root;
     }
     else if(root->address < address && (root->address + root->length) > address){
-        fprintf(stderr, "\nError : Not the first byte of the address\n");
-//        fprintf(stderr,"Root address : %ld, Root size %ud, Address being freed up: %ld",
-                (intptr_t)root->address, root->length, (intptr_t)address);
+        fprintf(stderr, "\nError: Not the first byte of the address %p\n", address);
         exit(-1);
     } else if(root->address > address){
         return isValidNode(root->left, address);
@@ -275,9 +279,9 @@ TreeNode* isValidTreeNode(TreeNode* root, void* address, size_t size){
         exit(-1);
     }
     else if(root->address > address){
-        return isValidNode(root->left, address);
+        return isValidTreeNode(root->left, address, size);
     } else{
-        return isValidNode(root->right, address);
+        return isValidTreeNode(root->right, address, size);
     }
 
 }
@@ -285,54 +289,50 @@ TreeNode* isValidTreeNode(TreeNode* root, void* address, size_t size){
 void validateTreeNode(void *address, size_t size){
     TreeNode *node = isValidTreeNode(root, address, size);
     if(node == NULL){
-        fprintf(stderr, "\nError : Invalid memory access. Either memory already freed up or not allocated yet\n");
+        fprintf(stderr, "\nError : Invalid memory access. Memory not allocated yet %p\n", address);
         exit(-1);
     }
+
+    if (!node->active) {
+        fprintf(stderr, "\nError : double free or corruption: %p\n", address);
+        exit(-1);
+    }
+}
+
+void disable(void* address){
+    TreeNode *node = isValidNode(root, address);
+    if(node == NULL){
+        fprintf(stderr, "\nError: Requested memory is not allocated %p\n", address);
+        exit(-1);
+    }
+    if (!node->active) {
+        fprintf(stderr, "\nError : double free or corruption: %p\n", address);
+        exit(-1);
+    }
+    node->active = false;
+    node->length = 0;
+    return;
 }
 
 void delete(void* address){
     TreeNode *node = isValidNode(root, address);
     if(node == NULL){
-        fprintf(stderr, "\nError : Requested memory is already freed up or not available\n");
+        fprintf(stderr, "\nError : Requested memory is not allocated %p\n", address);
+        exit(-1);
+    }
+    if (!node->active) {
+        fprintf(stderr, "\nError : double free or corruption: %p\n", address);
         exit(-1);
     }
     root = deleteNode(root, address);
     return;
 }
 
-
-//TreeNode* search(TreeNode* root, void* address){
-//    if(root == NULL){
-//        return NULL;
-//    }
-//    if(root->address == address){
-//        return root;
-//    } else if(root->address > address){
-//        return search(root->left, address);
-//    } else{
-//        return search(root->right, address);
-//    }
-//}
-//
-//TreeNode* isValidAddressToBeInserted(TreeNode* root, void* address, size_t size){
-//    if(root == NULL){
-//        return NULL;
-//    }
-//    if(root->address == address){
-//        return root;
-//    } else if(root->address > address){
-//        return isValidAddressToBeInserted(root->left, address);
-//    } else{
-//        return isValidAddressToBeInserted(root->right, address);
-//    }
-//}
-
 void preOrder(TreeNode *root)
 {
     if(root != NULL)
     {
 //        printf("%ld ", (__intptr_t)root->address);
-//        printf("%ld ", (intptr_t)root->address);
         preOrder(root->left);
         preOrder(root->right);
     }

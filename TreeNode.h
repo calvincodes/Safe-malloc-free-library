@@ -3,6 +3,8 @@
 //
 
 
+#include <stdbool.h>
+
 #ifndef MALLOC_LIBRARY_TREENODE_H
 #define MALLOC_LIBRARY_TREENODE_H
 
@@ -15,6 +17,7 @@ typedef struct TreeNode
     struct TreeNode *right;
     int height;
     size_t length;
+    bool active;
 } TreeNode;
 
 //
@@ -23,6 +26,8 @@ typedef struct TreeNode
 TreeNode* newNode(void* address, size_t size);
 
 TreeNode* insert(void* address, size_t length);
+
+void disable(void* address);
 
 void delete(void* address);
 
