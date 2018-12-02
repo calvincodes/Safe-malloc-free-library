@@ -293,7 +293,7 @@ void validateTreeNode(void *address, size_t size){
         exit(-1);
     }
     if (!node->active) {
-        fprintf(stderr, "\ndouble free or corruption: %p\n", address);
+        fprintf(stderr, "\nError : double free or corruption: %p\n", address);
         exit(-1);
     }
 }
@@ -305,7 +305,7 @@ void disable(void* address){
         exit(-1);
     }
     if (!node->active) {
-        fprintf(stderr, "\ndouble free or corruption: %p\n", address);
+        fprintf(stderr, "\nError : double free or corruption: %p\n", address);
         exit(-1);
     }
     node->active = false;
@@ -316,11 +316,11 @@ void disable(void* address){
 void delete(void* address){
     TreeNode *node = isValidNode(root, address);
     if(node == NULL){
-        fprintf(stderr, "\nError: Requested memory is not allocated %p\n", address);
+        fprintf(stderr, "\nError : Requested memory is not allocated %p\n", address);
         exit(-1);
     }
     if (!node->active) {
-        fprintf(stderr, "\ndouble free or corruption: %p\n", address);
+        fprintf(stderr, "\nError : double free or corruption: %p\n", address);
         exit(-1);
     }
     root = deleteNode(root, address);
