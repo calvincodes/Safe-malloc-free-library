@@ -292,6 +292,7 @@ void validateTreeNode(void *address, size_t size){
         fprintf(stderr, "\nError : Invalid memory access. Memory not allocated yet %p\n", address);
         exit(-1);
     }
+
     if (!node->active) {
         fprintf(stderr, "\nError : double free or corruption: %p\n", address);
         exit(-1);
