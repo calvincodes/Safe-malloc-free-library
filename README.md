@@ -7,43 +7,32 @@
 * **Anshu Verma**
 
 
-A build tool to read, validate and execute make files.
-Uses fork and execvp for creation of new processes and command execution.
+A tool to check for memory errors, dynamic memory 
+head allocation and check for memory allocation errors
+
 
 ## Task List
 
 This project is divided in the following major modules.
 
 * **malloc537**:
-    * Reads the command line arguments if passed and parses them.
-    * Reads the make file and parses to create a graph structure for all the targets which are to be executed.
-
+    * allocating the memory by calling malloc()
+    * this function will record a tuple (addri, leni), for the memory that you allocate in the heap. 
+    
 * **free537**:
-    * Traverses through the graph (assuming no cycles) in PostOrder manner.
-    * Checks if a target requires rebuilt as per the modification time of all its dependencies.
-    * Executes all the commands associated with a target if target building is required.
-
+    * This function will first check to make sure that freeing the memory specified by ptr makes sense, then will call free() to do the actual free. *
+    * Freeing memory that has not be allocated with malloc537(). *
+    * Freeing memory that is not the first byte of the range of memory that was allocated. *
+    * Freeing memory that was previously freed (double free). *
+* **realloc537**:    
+    * If ptr is NULL,then this follows the specification of malloc537()*
+    * If size is zero and ptr is not NULL,then this follows the specification of free537()*
+    **
 * **memcheck537**:
-    * Traverses through the graph (assuming no cycles) in PostOrder manner.
-    * Checks if a target requires rebuilt as per the modification time of all its dependencies.
-    * Executes all the commands associated with a target if target building is required.
+   * This function checks to see the address range specified by address ptr and length size are fully within a range allocated by malloc537() and memory not yet freed by free537()*
+   * When an error is detected, then print out a detailed and informative error message and exit the program (with a -1 status)*
 
-* **Files**:
-    * TreeNode.c:
-        * It defines all the target node in the makeFile. All the dependencies and command associates are part of this structure.
-        * It also provides following functionality.
-        * This also lets you create all the connections among graph Node.
-        * It also has cycle detection method
+#### References
+https://www.geeksforgeeks.org/avl-tree-set-1-insertion/
+https://www.geeksforgeeks.org/avl-tree-set-2-deletion/
 
-    * linkedList:
-        * It defines the list of dependencies associated with TargetNode.
-        * All the commands node are also modeled as linkedList
-
-    * struct_input:
-        * This input structure stores the input commands like target or makefile provided in the command line.
-
-* **Utils**:
-    * Constants used across the program.
-    * Validator used across the program.
-
-* **driver.c** is the driver module for the entire project.

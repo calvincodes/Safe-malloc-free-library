@@ -30,6 +30,7 @@ TreeNode* newNode(void* address, size_t length) {
     node->left      = NULL;
     node->right     = NULL;
     node->height    = 1;  // new node is initially added at leaf
+    node->active    = true;
     return(node);
 }
 
@@ -89,8 +90,12 @@ TreeNode* insertNode(TreeNode* node, void* address, size_t length)
         node->left  = insertNode(node->left, address, length);
     else if (address > node->address)
         node->right = insertNode(node->right, address, length);
-    else // Equal address are not allowed in BST
+    else {
+        // Equal address are not allowed in BST
+        node->active = true;
+        node->length = length;
         return node;
+    }
 
     /* 2. Update height of this ancestor node */
     node->height = 1 + max(height(node->left),
@@ -151,8 +156,7 @@ TreeNode * minValueNode(TreeNode* node)
 // from subtree with given root. It returns root of
 // the modified subtree.
 
-TreeNode* deleteNode(TreeNode* root, void* address)
-{
+TreeNode* deleteNode(TreeNode* root, void* address) {
     // STEP 1: PERFORM STANDARD BST DELETE
 
     if (root == NULL)
@@ -160,10 +164,6 @@ TreeNode* deleteNode(TreeNode* root, void* address)
 
     // If the key to be deleted is smaller than the
     // root's key, then it lies in left subtree
-    if(root->address < address && root->address + root->length > address){
-        fprintf(stderr, "\nError : Not the first byte of the address\n");
-        exit(-1);
-    }
     if ( address < root->address )
         root->left = deleteNode(root->left, address);
 
@@ -174,8 +174,7 @@ TreeNode* deleteNode(TreeNode* root, void* address)
 
         // if key is same as root's key, then This is
         // the node to be deleted
-    else
-    {
+    else {
         // node with only one child or no child
         if( (root->left == NULL) || (root->right == NULL) )
         {
@@ -186,12 +185,20 @@ TreeNode* deleteNode(TreeNode* root, void* address)
             if (temp == NULL)
             {
                 temp = root;
+                free(temp);
                 root = NULL;
             }
-            else // One child case
-                *root = *temp; // Copy the contents of
-            // the non-empty child
-            free(temp);
+            else {
+                // One child case
+//                *root = *temp;
+                root->right = temp->right;
+                root->height = temp->height;
+                root->left = temp->left;
+                root->length = temp->length;
+                root->address = temp->address;
+                root->active = temp->active;
+                free(temp);
+            }
         }
         else
         {
@@ -201,6 +208,8 @@ TreeNode* deleteNode(TreeNode* root, void* address)
 
             // Copy the inorder successor's data to this node
             root->address = temp->address;
+            root->length = temp->length;
+            root->active = temp->active;
 
             // Delete the inorder successor
             root->right = deleteNode(root->right, temp->address);
@@ -208,42 +217,46 @@ TreeNode* deleteNode(TreeNode* root, void* address)
     }
 
     // If the tree had only one node then return
-    if (root == NULL)
+    if (root == NULL) {
         return root;
+    } else {
 
-    // STEP 2: UPDATE HEIGHT OF THE CURRENT NODE
-    root->height = 1 + max(height(root->left),
-                           height(root->right));
+        // STEP 2: UPDATE HEIGHT OF THE CURRENT NODE
+//    int heightLeft = (root->left) ? height(root->left) : 0;
+//    int heightRight = (root->right) ? height(root->right) : 0;
+//    root->height = 1 + max(heightLeft, heightRight);
+        root->height = 1 + max(height(root->left), height(root->right));
 
-    // STEP 3: GET THE BALANCE FACTOR OF THIS NODE (to
-    // check whether this node became unbalanced)
-    int balance = getBalance(root);
+        // STEP 3: GET THE BALANCE FACTOR OF THIS NODE (to
+        // check whether this node became unbalanced)
+        int balance = getBalance(root);
 
-    // If this node becomes unbalanced, then there are 4 cases
+        // If this node becomes unbalanced, then there are 4 cases
 
-    // Left Left Case
-    if (balance > 1 && getBalance(root->left) >= 0)
-        return rightRotate(root);
+        // Left Left Case
+        if (balance > 1 && getBalance(root->left) >= 0)
+            return rightRotate(root);
 
-    // Left Right Case
-    if (balance > 1 && getBalance(root->left) < 0)
-    {
-        root->left =  leftRotate(root->left);
-        return rightRotate(root);
+        // Left Right Case
+        if (balance > 1 && getBalance(root->left) < 0)
+        {
+            root->left =  leftRotate(root->left);
+            return rightRotate(root);
+        }
+
+        // Right Right Case
+        if (balance < -1 && getBalance(root->right) <= 0)
+            return leftRotate(root);
+
+        // Right Left Case
+        if (balance < -1 && getBalance(root->right) > 0)
+        {
+            root->right = rightRotate(root->right);
+            return leftRotate(root);
+        }
+
+        return root;
     }
-
-    // Right Right Case
-    if (balance < -1 && getBalance(root->right) <= 0)
-        return leftRotate(root);
-
-    // Right Left Case
-    if (balance < -1 && getBalance(root->right) > 0)
-    {
-        root->right = rightRotate(root->right);
-        return leftRotate(root);
-    }
-
-    return root;
 }
 
 TreeNode* isValidNode(TreeNode* root, void* address){
@@ -253,8 +266,8 @@ TreeNode* isValidNode(TreeNode* root, void* address){
     if(root->address == address){
         return root;
     }
-    else if(root->address < address && root->address + root->length > address){
-        fprintf(stderr, "\nError : Not the first byte of the address\n");
+    else if(root->address < address && (root->address + root->length) > address){
+        fprintf(stderr, "\nError: Not the first byte of the address %p\n", address);
         exit(-1);
     } else if(root->address > address){
         return isValidNode(root->left, address);
@@ -272,13 +285,13 @@ TreeNode* isValidTreeNode(TreeNode* root, void* address, size_t size){
         return root;
     }
     else if (root->address <= address &&  root->address + root->length >= address && root->address + root->length < address + size){
-        fprintf(stderr, "\nError : Address is valid but size is overflowing allocated range\n");
+        fprintf(stderr, "\nError : Address is valid but size is overflowing allocated range. Terminating!!! \n");
         exit(-1);
     }
     else if(root->address > address){
-        return isValidNode(root->left, address);
+        return isValidTreeNode(root->left, address, size);
     } else{
-        return isValidNode(root->right, address);
+        return isValidTreeNode(root->right, address, size);
     }
 
 }
@@ -286,53 +299,50 @@ TreeNode* isValidTreeNode(TreeNode* root, void* address, size_t size){
 void validateTreeNode(void *address, size_t size){
     TreeNode *node = isValidTreeNode(root, address, size);
     if(node == NULL){
-        fprintf(stderr, "\nError : Invalid memory access. Either memory already freed up or not allocated yet\n");
+        fprintf(stderr, "\nError : Invalid memory access. Memory not allocated yet %p\n", address);
         exit(-1);
     }
+
+    if (!node->active) {
+        fprintf(stderr, "\nError : double free for address : %p. Terminating!!!\n", address);
+        exit(-1);
+    }
+}
+
+void disable(void* address){
+    TreeNode *node = isValidNode(root, address);
+    if(node == NULL){
+        fprintf(stderr, "\nError: Requested memory is not allocated %p\n", address);
+        exit(-1);
+    }
+    if (!node->active) {
+        fprintf(stderr, "\nError : double free for address : %p. Terminating!!!\n", address);
+        exit(-1);
+    }
+    node->active = false;
+    node->length = 0;
+    return;
 }
 
 void delete(void* address){
     TreeNode *node = isValidNode(root, address);
     if(node == NULL){
-        fprintf(stderr, "\nError : Requested memory is already freed up or not available\n");
+        fprintf(stderr, "\nError : Requested memory is not allocated %p\n", address);
+        exit(-1);
+    }
+    if (!node->active) {
+        fprintf(stderr, "\nError : Double free: %p. Terminating the program...\n", address);
         exit(-1);
     }
     root = deleteNode(root, address);
     return;
 }
 
-
-//TreeNode* search(TreeNode* root, void* address){
-//    if(root == NULL){
-//        return NULL;
-//    }
-//    if(root->address == address){
-//        return root;
-//    } else if(root->address > address){
-//        return search(root->left, address);
-//    } else{
-//        return search(root->right, address);
-//    }
-//}
-//
-//TreeNode* isValidAddressToBeInserted(TreeNode* root, void* address, size_t size){
-//    if(root == NULL){
-//        return NULL;
-//    }
-//    if(root->address == address){
-//        return root;
-//    } else if(root->address > address){
-//        return isValidAddressToBeInserted(root->left, address);
-//    } else{
-//        return isValidAddressToBeInserted(root->right, address);
-//    }
-//}
-
 void preOrder(TreeNode *root)
 {
     if(root != NULL)
     {
-        printf("%ld ", (intptr_t)root->address);
+//        printf("%ld ", (__intptr_t)root->address);
         preOrder(root->left);
         preOrder(root->right);
     }
