@@ -156,8 +156,7 @@ TreeNode * minValueNode(TreeNode* node)
 // from subtree with given root. It returns root of
 // the modified subtree.
 
-TreeNode* deleteNode(TreeNode* root, void* address)
-{
+TreeNode* deleteNode(TreeNode* root, void* address) {
     // STEP 1: PERFORM STANDARD BST DELETE
 
     if (root == NULL)
@@ -175,8 +174,7 @@ TreeNode* deleteNode(TreeNode* root, void* address)
 
         // if key is same as root's key, then This is
         // the node to be deleted
-    else
-    {
+    else {
         // node with only one child or no child
         if( (root->left == NULL) || (root->right == NULL) )
         {
@@ -187,12 +185,20 @@ TreeNode* deleteNode(TreeNode* root, void* address)
             if (temp == NULL)
             {
                 temp = root;
+                free(temp);
                 root = NULL;
             }
-            else // One child case
-                *root = *temp; // Copy the contents of
-            // the non-empty child
-            free(temp);
+            else {
+                // One child case
+//                *root = *temp;
+                root->right = temp->right;
+                root->height = temp->height;
+                root->left = temp->left;
+                root->length = temp->length;
+                root->address = temp->address;
+                root->active = temp->active;
+                free(temp);
+            }
         }
         else
         {
@@ -211,42 +217,46 @@ TreeNode* deleteNode(TreeNode* root, void* address)
     }
 
     // If the tree had only one node then return
-    if (root == NULL)
+    if (root == NULL) {
         return root;
+    } else {
 
-    // STEP 2: UPDATE HEIGHT OF THE CURRENT NODE
-    root->height = 1 + max(height(root->left),
-                           height(root->right));
+        // STEP 2: UPDATE HEIGHT OF THE CURRENT NODE
+//    int heightLeft = (root->left) ? height(root->left) : 0;
+//    int heightRight = (root->right) ? height(root->right) : 0;
+//    root->height = 1 + max(heightLeft, heightRight);
+        root->height = 1 + max(height(root->left), height(root->right));
 
-    // STEP 3: GET THE BALANCE FACTOR OF THIS NODE (to
-    // check whether this node became unbalanced)
-    int balance = getBalance(root);
+        // STEP 3: GET THE BALANCE FACTOR OF THIS NODE (to
+        // check whether this node became unbalanced)
+        int balance = getBalance(root);
 
-    // If this node becomes unbalanced, then there are 4 cases
+        // If this node becomes unbalanced, then there are 4 cases
 
-    // Left Left Case
-    if (balance > 1 && getBalance(root->left) >= 0)
-        return rightRotate(root);
+        // Left Left Case
+        if (balance > 1 && getBalance(root->left) >= 0)
+            return rightRotate(root);
 
-    // Left Right Case
-    if (balance > 1 && getBalance(root->left) < 0)
-    {
-        root->left =  leftRotate(root->left);
-        return rightRotate(root);
+        // Left Right Case
+        if (balance > 1 && getBalance(root->left) < 0)
+        {
+            root->left =  leftRotate(root->left);
+            return rightRotate(root);
+        }
+
+        // Right Right Case
+        if (balance < -1 && getBalance(root->right) <= 0)
+            return leftRotate(root);
+
+        // Right Left Case
+        if (balance < -1 && getBalance(root->right) > 0)
+        {
+            root->right = rightRotate(root->right);
+            return leftRotate(root);
+        }
+
+        return root;
     }
-
-    // Right Right Case
-    if (balance < -1 && getBalance(root->right) <= 0)
-        return leftRotate(root);
-
-    // Right Left Case
-    if (balance < -1 && getBalance(root->right) > 0)
-    {
-        root->right = rightRotate(root->right);
-        return leftRotate(root);
-    }
-
-    return root;
 }
 
 TreeNode* isValidNode(TreeNode* root, void* address){
@@ -321,7 +331,7 @@ void delete(void* address){
         exit(-1);
     }
     if (!node->active) {
-        fprintf(stderr, "\nError : double free or corruption: %p\n", address);
+        fprintf(stderr, "\nError : Double free: %p. Terminating the program...\n", address);
         exit(-1);
     }
     root = deleteNode(root, address);

@@ -11,10 +11,6 @@ void *malloc537(size_t size){
     if(size == 0){
         fprintf(stderr, "\nWarning : Size 0 provided for malloc\n");
     }
-    if (size < 0) {
-        fprintf(stderr, "\nError : Negative Size provided for malloc\n");
-        exit(-1);
-    }
     void* ptr = malloc(size);
     if(ptr == NULL){
         fprintf(stderr, "\nMalloc failed to allocate memory\n");
@@ -34,10 +30,7 @@ void free537(void *ptr){
 void *realloc537(void *ptr, size_t size){
     if(ptr == NULL){
         return malloc537(size);
-    } else if (size < 0) {
-        fprintf(stderr, "\nError : Negative Size provided for realloc537\n");
-        exit(-1);
-    } else if(size == 0){
+    }  else if(size == 0){
         fprintf(stderr, "\nWarning : Size 0 provided for realloc537\n");
         free537(ptr);
         return NULL;
@@ -59,10 +52,6 @@ void memcheck537(void *ptr, size_t size){
     }
     if(size == 0){
         fprintf(stderr, "\nWarning : Size 0 provided for memcheck\n");
-    }
-    if (size < 0) {
-        fprintf(stderr, "\nError : Negative Size provided for memcheck\n");
-        exit(-1);
     }
     validateTreeNode(ptr, size);
 }
