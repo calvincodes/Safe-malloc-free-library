@@ -20,12 +20,10 @@ void *malloc537(size_t size){
     return ptr;
 }
 void free537(void *ptr){
-    if(ptr == NULL){
-        fprintf(stderr, "\nError : Given pointer for free537 is NULL\n");
-        exit(-1);
+    if(ptr != NULL){
+        disable(ptr);
+        free(ptr);
     }
-    disable(ptr);
-    free(ptr);
 }
 void *realloc537(void *ptr, size_t size){
     if(ptr == NULL){
