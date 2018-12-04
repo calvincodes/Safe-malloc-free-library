@@ -2,24 +2,14 @@
 #include "537malloc.h"
 
 int main() {
-    printf("Allocating 10 bytes of memory\n");
-    char *ptr = malloc537(10);
+    printf("Allocating 1 byte of memory\n");
+    char *ptr = malloc537(sizeof(char));
 
+    printf("Double Free : Freeing memory at %p twice\n", ptr);
     free537(ptr);
-    realloc537(ptr, 5);
-
-//    printf("Allocated addr : %p\n", ptr);
-//    // This should pass
-//    memcheck537(ptr, 10);
-//
-//    printf("Reallocating to 20 bytes\n");
-//    ptr = realloc537(ptr, 20);
-//
-//    printf("Reallocated addr : %p\n", ptr);
-//
-//    // This should pass
-//    memcheck537(ptr, 10);
-//    printf("If this prints, realloc is passing!\n");
+    printf("1st free, should be a success\n");
+    free537(ptr);
+    printf("This statement should not be printed!\n");
 
     return 0;
 }

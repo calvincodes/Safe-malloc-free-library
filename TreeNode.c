@@ -285,7 +285,7 @@ TreeNode* isValidTreeNode(TreeNode* root, void* address, size_t size){
         return root;
     }
     else if (root->address <= address &&  root->address + root->length >= address && root->address + root->length < address + size){
-        fprintf(stderr, "\nError : Address is valid but size is overflowing allocated range\n");
+        fprintf(stderr, "\nError : Address is valid but size is overflowing allocated range. Terminating!!! \n");
         exit(-1);
     }
     else if(root->address > address){
@@ -304,7 +304,7 @@ void validateTreeNode(void *address, size_t size){
     }
 
     if (!node->active) {
-        fprintf(stderr, "\nError : double free or corruption: %p\n", address);
+        fprintf(stderr, "\nError : double free for address : %p. Terminating!!!\n", address);
         exit(-1);
     }
 }
@@ -316,7 +316,7 @@ void disable(void* address){
         exit(-1);
     }
     if (!node->active) {
-        fprintf(stderr, "\nError : double free or corruption: %p\n", address);
+        fprintf(stderr, "\nError : double free for address : %p. Terminating!!!\n", address);
         exit(-1);
     }
     node->active = false;

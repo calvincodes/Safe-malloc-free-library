@@ -21,7 +21,7 @@ void *malloc537(size_t size){
 }
 void free537(void *ptr){
     if(ptr == NULL){
-        fprintf(stderr, "\nError : Given pointer is NULL\n");
+        fprintf(stderr, "\nError : Given pointer for free537 is NULL\n");
         exit(-1);
     }
     disable(ptr);
@@ -47,7 +47,7 @@ void *realloc537(void *ptr, size_t size){
 }
 void memcheck537(void *ptr, size_t size){
     if(ptr == NULL){
-        fprintf(stderr, "\nError : Requested pointer is NULL\n");
+        fprintf(stderr, "\nError : Given pointer for memcheck is NULL\n");
         exit(-1);
     }
     if(size == 0){
